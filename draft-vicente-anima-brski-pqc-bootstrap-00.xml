@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE rfc [
+  <!ENTITY nbsp "&#160;">
+]>
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude"
+     category="info"
+     docName="draft-vicente-anima-brski-pqc-bootstrap-00"
+     ipr="trust200902"
+     submissionType="independent"
+     xml:lang="en"
+     version="3">
+
+  <front>
+    <title abbrev="BRSKI PQC Bootstrap">Post-Quantum Cryptographic Profile for BRSKI Bootstrapping</title>
+
+    <seriesInfo name="Internet-Draft" value="draft-vicente-anima-brski-pqc-bootstrap-00"/>
+
+    <author initials="B." surname="Vicente" fullname="Brian Vicente">
+      <organization>Sanctum SecOps LLC</organization>
+      <address>
+        <postal>
+          <city>Pine City</city>
+          <region>NY</region>
+          <country>United States of America</country>
+        </postal>
+        <email>bvicente@sanctumsecops.com</email>
+        <uri>https://orcid.org/0009-0006-6395-5308</uri>
+      </address>
+    </author>
+
+    <date year="2026" month="June" day="8"/>
+
+    <area>Security</area>
+    <workgroup>Autonomic Networking Integrated Model and Approach</workgroup>
+
+    <keyword>post-quantum cryptography</keyword>
+    <keyword>PQC</keyword>
+    <keyword>Sanctum SecOps</keyword>
+    <keyword>anima</keyword>
+
+    <abstract>
+      <t>This document defines a post-quantum cryptographic (PQC) profile for the Bootstrapping Remote Secure Key Infrastructure (BRSKI) protocol and its constrained variant (cBRSKI). The profile specifies ML-DSA-signed vouchers, PQC pledge identity certificates, hybrid TLS during bootstrap exchanges, and a rotation-epoch-aware Manufacturer Authorized Signing Authority (MASA).</t>
+      <t>The profile is targeted at Internet-of-Things (IoT) and constrained-device deployments that require strong onboarding guarantees in the post-quantum era. Concrete device-class selection parameters are deployment-specific and are not disclosed in this Internet-Draft.</t>
+    </abstract>
+
+    <note title="Source and Archival" removeInRFC="true">
+      <t>
+        Source for this draft is maintained at
+        <eref target="https://github.com/Sanc-Admin/anima-brski-pqc-bootstrap">https://github.com/Sanc-Admin/anima-brski-pqc-bootstrap</eref>.
+        A citable archival version of this document is published at Zenodo
+        upon each tagged release.
+        Author ORCID iD:
+        <eref target="https://orcid.org/0009-0006-6395-5308">https://orcid.org/0009-0006-6395-5308</eref>.
+        Author professional credentials:
+        <eref target="https://www.credly.com/users/brian-vicente">https://www.credly.com/users/brian-vicente</eref>.
+      </t>
+      <t>
+        Discussion of this document occurs on the IETF "anima" mailing list
+        (anima@ietf.org). Issues and pull requests may be filed at the GitHub
+        repository linked above.
+      </t>
+    </note>
+
+    <note title="IPR Considerations" removeInRFC="true">
+      <t>
+        The author has filed United States patent applications covering
+        subject matter relevant to this document, including
+        U.S. Provisional Patent Application No. 64/080,137
+        (filed 2026-06-01) and U.S. Patent Application No. 19/698,870
+        (filed 2026-06-05). By posting this Internet-Draft, the author
+        submits to the IETF Trust the rights described in Section 5 of
+        BCP 78 and BCP 79. Patent licensing terms are not yet known.
+        Implementers and reviewers should consult the IETF Datatracker
+        IPR disclosure page for this document for current disclosure
+        status. The Sanctum SecOps Private Enterprise Number (PEN) root
+        used for any OID allocations referenced in companion documents is
+        1.3.6.1.4.1.65953.
+      </t>
+      <t>
+        Patent-Pending Claim Scope: The scope of the pending patent
+        applications referenced above includes, but is not limited to,
+        the orchestration, observability, and tenant-isolation mechanisms
+        described in this document insofar as they intersect the claims
+        of the referenced applications. This Internet-Draft itself does
+        not grant any patent license. Specific implementation parameters
+        that would extend beyond the disclosed interface (including but
+        not limited to scoring weights, rotation triggers, tenant
+        carve-out parameters, and adequacy thresholds) are intentionally
+        out of scope and are not disclosed in this Internet-Draft.
+      </t>
+    </note>
+
+  </front>
+
+  <middle>
+    <section anchor="introduction">
+      <name>Introduction</name>
+      <t>BRSKI enables zero-touch onboarding of devices into an operator's network. As deployments migrate to PQC, both vouchers and pledge identities must be expressible in PQC algorithms. This document defines the necessary profile.</t>
+    </section>
+    <section anchor="terminology">
+      <name>Terminology</name>
+      <t>The key words "MUST", "MUST NOT", "SHOULD", "MAY" in this document are to be interpreted as described in BCP 14 [RFC2119] [RFC8174] when, and only when, they appear in all capitals, as shown here.</t>
+    </section>
+    <section anchor="pqc-voucher-signing">
+      <name>PQC Voucher Signing</name>
+      <t>MASAs compliant with this profile MUST be able to sign vouchers using ML-DSA-65 or ML-DSA-87 and MUST include the pqc_epoch_id field in the voucher.</t>
+    </section>
+    <section anchor="pqc-pledge-identity-certificates">
+      <name>PQC Pledge Identity Certificates</name>
+      <t>Pledge identity certificates MUST be either pure PQC or hybrid composite certificates conformant with the relevant LAMPS specifications.</t>
+    </section>
+    <section anchor="hybrid-tls-during-bootstrap">
+      <name>Hybrid TLS During Bootstrap</name>
+      <t>Bootstrap exchanges MUST use TLS 1.3 with a hybrid key exchange selected from the PQC-approved set. Pure classical exchanges MUST be rejected when the profile is active.</t>
+    </section>
+    <section anchor="constrained-device-considerations">
+      <name>Constrained-Device Considerations</name>
+      <t>For cBRSKI deployments, devices with insufficient resources to perform ML-DSA verification MAY fall back to SLH-DSA-SHA2-128s under operator policy. Concrete device-class selection parameters are deployment-specific and are not disclosed in this Internet-Draft.</t>
+    </section>
+    <section anchor="security-considerations">
+      <name>Security Considerations</name>
+      <t>The profile preserves the BRSKI trust model while raising the cryptographic strength of the artifacts. Operators MUST monitor the freshness of pqc_epoch_id values across deployed pledges.</t>
+    </section>
+    <section anchor="iana-considerations">
+      <name>IANA Considerations</name>
+      <t>IANA is requested to allocate algorithm identifiers and voucher field identifiers necessary for this profile.</t>
+    </section>
+
+  </middle>
+
+  <back>
+    <references>
+      <name>Informative References</name>
+      <reference anchor="RFC2119" target="https://www.rfc-editor.org/info/rfc2119">
+        <front>
+          <title>Key words for use in RFCs to Indicate Requirement Levels</title>
+          <author initials="S." surname="Bradner" fullname="S. Bradner"/>
+          <date year="1997" month="March"/>
+        </front>
+      </reference>
+      <reference anchor="RFC8174" target="https://www.rfc-editor.org/info/rfc8174">
+        <front>
+          <title>Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</title>
+          <author initials="B." surname="Leiba" fullname="B. Leiba"/>
+          <date year="2017" month="May"/>
+        </front>
+      </reference>
+    </references>
+  </back>
+</rfc>
