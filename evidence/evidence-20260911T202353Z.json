@@ -1,6 +1,6 @@
 {
   "draft_repo": "anima-brski-pqc-bootstrap",
-  "utc": "20260911T202751Z",
+  "utc": "20260911T202353Z",
   "host": "sanctum-13.sanctumsecops.net",
   "pen": "1.3.6.1.4.1.65953",
   "status": "live",
@@ -18,16 +18,16 @@
   },
   "artifacts": {
     "draft-vicente-anima-brski-pqc-bootstrap-03.xml": {
-      "sha256": "2e6685eb09ec6d80c7002a47985944cedcdeca307f416fcd10616d42454215fb",
-      "bytes": 7324
+      "sha256": "1f041fdfe772c4e7dccf30cfd4db92879de13022f595b86a1539e4a5c7be5798",
+      "bytes": 8023
     },
     "draft-vicente-anima-brski-pqc-bootstrap-03.txt": {
-      "sha256": "bfbdf2e76a5a879696f61b7c2b312d34d3b2bb87d3a41d95d70abbb5c5513fb4",
-      "bytes": 8965
+      "sha256": "7dd134a3837665256c1f627da83e63142ce0fae8d0a5ddd79fdc3d0f45fcba02",
+      "bytes": 8737
     },
     "draft-vicente-anima-brski-pqc-bootstrap-03.html": {
-      "sha256": "370d6750ab5e05c7bca66f8353cc782e2edf563709c4b34cd9e1cd3efb41bac0",
-      "bytes": 49501
+      "sha256": "aec162964d4839c0c1d6a9e457a0c4c86885162d198aae9c4b96470c720d42f7",
+      "bytes": 48855
     }
   },
   "boilerplate": {
