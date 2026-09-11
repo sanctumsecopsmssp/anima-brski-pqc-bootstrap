@@ -1,14 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version='1.0' encoding='UTF-8'?>
 <!DOCTYPE rfc [
-  <!ENTITY nbsp "&#160;">
+<!ENTITY nbsp "&#160;">
 ]>
-<rfc xmlns:xi="http://www.w3.org/2001/XInclude"
-     category="info"
-     docName="draft-vicente-anima-brski-pqc-bootstrap-03"
-     ipr="trust200902"
-     submissionType="independent"
-     xml:lang="en"
-     version="3">
+<rfc xmlns:xi="http://www.w3.org/2001/XInclude" category="info" docName="draft-vicente-anima-brski-pqc-bootstrap-03" ipr="trust200902" submissionType="IETF" xml:lang="en" version="3">
   <front>
     <title abbrev="BRSKI PQC Bootstrap">Post-Quantum Cryptographic Profile for BRSKI Bootstrapping</title>
     <seriesInfo name="Internet-Draft" value="draft-vicente-anima-brski-pqc-bootstrap-03"/>

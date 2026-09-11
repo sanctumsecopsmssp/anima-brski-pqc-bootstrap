@@ -1,0 +1,280 @@
+
+
+
+
+Autonomic Networking Integrated Model and Approach            B. Vicente
+Internet-Draft                                        Sanctum SecOps LLC
+Intended status: Informational                            12 August 2026
+Expires: 13 February 2027
+
+
+       Post-Quantum Cryptographic Profile for BRSKI Bootstrapping
+               draft-vicente-anima-brski-pqc-bootstrap-03
+
+Abstract
+
+   This document defines a post-quantum cryptographic (PQC) profile for
+   the Bootstrapping Remote Secure Key Infrastructure (BRSKI) protocol
+   (RFC 8995) and its constrained variant (cBRSKI).  The profile
+   mandates ML-DSA-signed vouchers, PQC or hybrid composite pledge
+   identity certificates, hybrid TLS 1.3 during bootstrap exchanges, and
+   a rotation-epoch-aware Manufacturer Authorized Signing Authority
+   (MASA) recording a pqc_epoch_id in every issued voucher.
+
+   This revision (-03) expands hybrid composite certificate
+   requirements, aligns with FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA),
+   and adds a MASA epoch-rotation protocol conformant with draft-
+   vicente-lamps-rotation-envelope.
+
+Source and Archival
+
+   This note is to be removed before publishing as an RFC.
+
+   Source: https://github.com/Sanc-Admin/anima-brski-pqc-bootstrap.
+   ORCID: https://orcid.org/0009-0006-6395-5308.  Discussion:
+   anima@ietf.org.
+
+IPR Considerations
+
+   This note is to be removed before publishing as an RFC.
+
+   U.S.  Provisional Patent Application No. 64/080,137 (2026-06-01) and
+   U.S.  Patent Application No. 19/698,870 (2026-06-05).  Sanctum SecOps
+   PEN root: 1.3.6.1.4.1.65953.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+
+
+
+
+
+
+Vicente                 Expires 13 February 2027                [Page 1]
+
+Internet-Draft             BRSKI PQC Bootstrap               August 2026
+
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 13 February 2027.
+
+Copyright Notice
+
+   Copyright (c) 2026 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Revised BSD License text as
+   described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Revised BSD License.
+
+Table of Contents
+
+   1.  Introduction  . . . . . . . . . . . . . . . . . . . . . . . .   2
+   2.  Terminology . . . . . . . . . . . . . . . . . . . . . . . . .   3
+   3.  PQC Voucher Signing . . . . . . . . . . . . . . . . . . . . .   3
+   4.  PQC Pledge Identity Certificates  . . . . . . . . . . . . . .   3
+   5.  Hybrid TLS During Bootstrap . . . . . . . . . . . . . . . . .   3
+   6.  MASA Epoch Rotation . . . . . . . . . . . . . . . . . . . . .   3
+   7.  Constrained-Device Considerations . . . . . . . . . . . . . .   4
+   8.  Security Considerations . . . . . . . . . . . . . . . . . . .   4
+   9.  IANA Considerations . . . . . . . . . . . . . . . . . . . . .   4
+   10. References  . . . . . . . . . . . . . . . . . . . . . . . . .   4
+     10.1.  Normative References . . . . . . . . . . . . . . . . . .   4
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .   5
+
+1.  Introduction
+
+   BRSKI [RFC8995] enables zero-touch onboarding of devices into an
+   operator domain.  This document defines the BRSKI PQC Profile (BRSKI-
+   PQC), constraining algorithm choices, adding a rotation-epoch voucher
+   field, and specifying MASA operational requirements for epoch
+   management.
+
+
+
+Vicente                 Expires 13 February 2027                [Page 2]
+
+Internet-Draft             BRSKI PQC Bootstrap               August 2026
+
+
+   This revision aligns with FIPS 204 (ML-DSA) [FIPS204], FIPS 205 (SLH-
+   DSA) [FIPS205], and draft-vicente-lamps-rotation-envelope.
+
+2.  Terminology
+
+   BCP 14 [RFC2119] [RFC8174] applies.
+
+   pqc_epoch_id:
+      Monotonically increasing integer identifying the MASA signing-key
+      epoch.  Recorded in every BRSKI-PQC voucher.
+
+   ML-DSA:
+      Module-Lattice-Based Digital Signature Algorithm, FIPS 204.
+
+   SLH-DSA:
+      Stateless Hash-Based Digital Signature Algorithm, FIPS 205.
+
+3.  PQC Voucher Signing
+
+   MASAs compliant with BRSKI-PQC MUST sign vouchers using ML-DSA-65 or
+   ML-DSA-87 [FIPS204].  RSA and ECDSA voucher signatures MUST NOT be
+   used.  Every voucher MUST include a pqc_epoch_id field (uint32, non-
+   zero) and pqc_alg_id (OID string of the signing algorithm).
+
+4.  PQC Pledge Identity Certificates
+
+   Pledge IDevID certificates MUST be pure ML-DSA or hybrid composite
+   (ML-DSA + ECDSA P-256/P-384).  RSA and standalone ECDSA IDevIDs MUST
+   NOT be provisioned in BRSKI-PQC deployments.  The PQCHC extension
+   (draft-vicente-lamps-pqchc) SHOULD be included where device resources
+   permit.
+
+5.  Hybrid TLS During Bootstrap
+
+   Bootstrap exchanges MUST use TLS 1.3 [RFC8446] with a hybrid key
+   exchange: X25519MLKEM768, SecP256r1MLKEM768, or X448MLKEM1024.  Pure
+   classical key exchange MUST be rejected when BRSKI-PQC is active.
+
+6.  MASA Epoch Rotation
+
+   MASAs MUST implement epoch-based ML-DSA signing key rotation.  Upon
+   rotation, a Rotation Envelope (draft-vicente-lamps-rotation-envelope)
+   MUST be published containing the prior and new epoch certificates
+   with a binding signature.  Registrars MUST validate the Rotation
+   Envelope before accepting vouchers under the new epoch.  Epoch
+   rotation MUST occur at least every 365 days.
+
+
+
+
+
+Vicente                 Expires 13 February 2027                [Page 3]
+
+Internet-Draft             BRSKI PQC Bootstrap               August 2026
+
+
+7.  Constrained-Device Considerations
+
+   Class 1/2 devices MAY use SLH-DSA-SHA2-128s [FIPS205] in place of ML-
+   DSA for voucher verification under explicit operator policy.  Device-
+   class selection parameters are deployment-specific and not disclosed
+   herein.
+
+8.  Security Considerations
+
+   BRSKI-PQC provides HNDL resistance via hybrid TLS, voucher forgery
+   resistance via ML-DSA, and epoch replay protection via monotonic
+   pqc_epoch_id.  Operators MUST maintain an epoch registry accessible
+   to registrars and MUST fail closed when the registry is unavailable.
+
+9.  IANA Considerations
+
+   IANA is requested to register pqc-epoch-id and pqc-alg-id YANG leaf
+   nodes and ML-DSA/SLH-DSA algorithm identifiers in the BRSKI voucher
+   algorithm registry.
+
+10.  References
+
+10.1.  Normative References
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", March 1997,
+              <https://www.rfc-editor.org/info/rfc2119>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", May 2017,
+              <https://www.rfc-editor.org/info/rfc8174>.
+
+   [RFC8446]  Rescorla, E., "The Transport Layer Security (TLS) Protocol
+              Version 1.3", August 2018,
+              <https://www.rfc-editor.org/info/rfc8446>.
+
+   [RFC8995]  Pritikin, M., "Bootstrapping Remote Secure Key
+              Infrastructure (BRSKI)", May 2021,
+              <https://www.rfc-editor.org/info/rfc8995>.
+
+   [FIPS204]  NIST, "Module-Lattice-Based Digital Signature Standard
+              (ML-DSA)", August 2024,
+              <https://doi.org/10.6028/NIST.FIPS.204>.
+
+   [FIPS205]  NIST, "Stateless Hash-Based Digital Signature Standard
+              (SLH-DSA)", August 2024,
+              <https://doi.org/10.6028/NIST.FIPS.205>.
+
+
+
+
+Vicente                 Expires 13 February 2027                [Page 4]
+
+Internet-Draft             BRSKI PQC Bootstrap               August 2026
+
+
+Author's Address
+
+   Brian Vicente
+   Sanctum SecOps LLC
+   Pine City, NY
+   United States of America
+   Email: bvicente@sanctumsecops.com
+   URI:   https://orcid.org/0009-0006-6395-5308
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Vicente                 Expires 13 February 2027                [Page 5]
